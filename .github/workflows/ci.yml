@@ -45,11 +45,11 @@ jobs:
     - name: Build Docker images
       run: docker-compose build
 
-    - name: Start database
-      run: docker-compose up -d db
+    # - name: Start database
+    #   run: docker-compose up -d db
 
-    - name: Wait for database to be ready
-      run: sleep 10
+    # - name: Wait for database to be ready
+    #   run: sleep 10
 
     - name: Run migration
       run: docker-compose run migrate
