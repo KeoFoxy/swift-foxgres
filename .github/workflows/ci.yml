@@ -12,24 +12,24 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
-    services:
-      db:
-        image: postgres:16-alpine
-        env:
-          POSTGRES_USER: admin
-          POSTGRES_PASSWORD: admin
-          POSTGRES_DB: foxgres
-        options: >-
-          --health-cmd="pg_isready -U admin"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
-        ports:
-          - 5432:5432
+#    services:
+#      db:
+#        image: postgres:16-alpine
+#        env:
+#          POSTGRES_USER: admin
+#          POSTGRES_PASSWORD: admin
+#          POSTGRES_DB: foxgres
+#        options: >-
+#          --health-cmd="pg_isready -U admin"
+#          --health-interval=10s
+#          --health-timeout=5s
+#          --health-retries=5
+#        ports:
+#          - 5432:5432
 
     env:
       LOG_LEVEL: debug
-      DATABASE_HOST: localhost
+      DATABASE_HOST: db
       DATABASE_PORT: 5432
       DATABASE_NAME: foxgres
       DATABASE_USERNAME: admin
@@ -45,11 +45,11 @@ jobs:
     - name: Build Docker images
       run: docker-compose build
 
-    # - name: Start database
-    #   run: docker-compose up -d db
+    - name: Start all containers
+      run: docker-compose up -d
 
-    # - name: Wait for database to be ready
-    #   run: sleep 10
+    - name: Wait for database to be ready
+      run: sleep 10
 
     - name: Run migration
       run: docker-compose run migrate
