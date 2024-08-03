@@ -21,28 +21,33 @@ volumes:
 
 x-shared_environment: &shared_environment
   LOG_LEVEL: ${LOG_LEVEL:-debug}
-  DATABASE_HOST: db
-  DATABASE_NAME: vapor_database
-  DATABASE_USERNAME: vapor_username
-  DATABASE_PASSWORD: vapor_password
+  DATABASE_HOST: ${DATABASE_HOST:-db}
+  DATABASE_PORT: ${DATABASE_PORT:-5432}
+  DATABASE_NAME: ${DATABASE_NAME:-foxgres}
+  DATABASE_USERNAME: ${DATABASE_USERNAME:-admin}
+  DATABASE_PASSWORD: ${DATABASE_PASSWORD:-admin}
   
 services:
   app:
     image: swift-foxgres:latest
     build:
       context: .
+    env_file:
+      - .env
     environment:
       <<: *shared_environment
     depends_on:
       - db
     ports:
       - '8080:8080'
-    # user: '0' # uncomment to run as root for testing purposes even though Dockerfile defines 'vapor' user.
     command: ["serve", "--env", "production", "--hostname", "0.0.0.0", "--port", "8080"]
+
   migrate:
     image: swift-foxgres:latest
     build:
       context: .
+    env_file:
+      - .env
     environment:
       <<: *shared_environment
     depends_on:
@@ -50,10 +55,13 @@ services:
     command: ["migrate", "--yes"]
     deploy:
       replicas: 0
+
   revert:
     image: swift-foxgres:latest
     build:
       context: .
+    env_file:
+      - .env
     environment:
       <<: *shared_environment
     depends_on:
@@ -61,14 +69,15 @@ services:
     command: ["migrate", "--revert", "--yes"]
     deploy:
       replicas: 0
+
   db:
     image: postgres:16-alpine
     volumes:
       - db_data:/var/lib/postgresql/data/pgdata
     environment:
       PGDATA: /var/lib/postgresql/data/pgdata
-      POSTGRES_USER: vapor_username
-      POSTGRES_PASSWORD: vapor_password
-      POSTGRES_DB: vapor_database
+      POSTGRES_USER: ${DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: ${DATABASE_NAME}
     ports:
       - '5432:5432'
