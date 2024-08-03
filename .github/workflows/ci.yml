@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      db:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: admin
+          POSTGRES_PASSWORD: admin
+          POSTGRES_DB: foxgres
+        options: >-
+          --health-cmd="pg_isready -U admin"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+        ports:
+          - 5432:5432
+
+    env:
+      LOG_LEVEL: debug
+      DATABASE_HOST: localhost
+      DATABASE_PORT: 5432
+      DATABASE_NAME: foxgres
+      DATABASE_USERNAME: admin
+      DATABASE_PASSWORD: admin
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Docker Compose
+      run: sudo apt-get -y install docker-compose
+
+    - name: Build Docker images
+      run: docker-compose build
+
+    - name: Start database
+      run: docker-compose up -d db
+
+    - name: Wait for database to be ready
+      run: sleep 10
+
+    - name: Run migration
+      run: docker-compose run migrate
+
+    - name: Run tests
+      run: swift test
+
+    - name: Stop services
+      run: docker-compose down

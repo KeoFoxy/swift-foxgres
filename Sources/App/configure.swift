@@ -23,6 +23,7 @@ public func configure(_ app: Application) async throws {
     app.migrations.add(CreateAnimeSchema())
     app.migrations.add(AddGenreAndImgUrlFields())
     app.migrations.add(FillDatabase())
+    app.migrations.add(CreateTodo())
 
     app.views.use(.leaf)
     // Disable CORS

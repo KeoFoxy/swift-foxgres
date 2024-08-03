@@ -19,23 +19,17 @@ version: '3.7'
 volumes:
   db_data:
 
-x-shared_environment: &shared_environment
-  LOG_LEVEL: ${LOG_LEVEL:-debug}
-  DATABASE_HOST: ${DATABASE_HOST:-db}
-  DATABASE_PORT: ${DATABASE_PORT:-5432}
-  DATABASE_NAME: ${DATABASE_NAME:-foxgres}
-  DATABASE_USERNAME: ${DATABASE_USERNAME:-admin}
-  DATABASE_PASSWORD: ${DATABASE_PASSWORD:-admin}
-  
 services:
   app:
     image: swift-foxgres:latest
     build:
       context: .
-    env_file:
-      - .env
     environment:
-      <<: *shared_environment
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      DATABASE_NAME: foxgres
+      DATABASE_USERNAME: admin
+      DATABASE_PASSWORD: admin
     depends_on:
       - db
     ports:
@@ -46,10 +40,12 @@ services:
     image: swift-foxgres:latest
     build:
       context: .
-    env_file:
-      - .env
     environment:
-      <<: *shared_environment
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      DATABASE_NAME: foxgres
+      DATABASE_USERNAME: admin
+      DATABASE_PASSWORD: admin
     depends_on:
       - db
     command: ["migrate", "--yes"]
@@ -60,10 +56,12 @@ services:
     image: swift-foxgres:latest
     build:
       context: .
-    env_file:
-      - .env
     environment:
-      <<: *shared_environment
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      DATABASE_NAME: foxgres
+      DATABASE_USERNAME: admin
+      DATABASE_PASSWORD: admin
     depends_on:
       - db
     command: ["migrate", "--revert", "--yes"]
@@ -76,8 +74,8 @@ services:
       - db_data:/var/lib/postgresql/data/pgdata
     environment:
       PGDATA: /var/lib/postgresql/data/pgdata
-      POSTGRES_USER: ${DATABASE_USERNAME}
-      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
-      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: foxgres
     ports:
       - '5432:5432'
