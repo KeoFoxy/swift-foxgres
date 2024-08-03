@@ -29,7 +29,7 @@ jobs:
 
     env:
       LOG_LEVEL: debug
-      DATABASE_HOST: db
+      DATABASE_HOST: localhost
       DATABASE_PORT: 5432
       DATABASE_NAME: foxgres
       DATABASE_USERNAME: admin
