@@ -25,6 +25,8 @@ public func configure(_ app: Application) async throws {
     app.migrations.add(FillDatabase())
 
     app.views.use(.leaf)
+    // Disable CORS
+    app.middleware.use(configureCORS())
 
     // register routes
     try routes(app)

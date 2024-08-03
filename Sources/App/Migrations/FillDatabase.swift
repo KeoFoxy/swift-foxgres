@@ -6,8 +6,8 @@ struct FillDatabase: AsyncMigration {
     func prepare(on database: Database) async throws {
         let logger = Logger(label: "FillDatabase")
 
-        let animeFileURL = URL(fileURLWithPath: "/app/Resources/data/anime_data.json")
-        let charactersFileURL = URL(fileURLWithPath: "/app/Resources/data/characters_data.json")
+       let animeFileURL = URL(fileURLWithPath: "/app/Resources/data/anime_data.json")
+       let charactersFileURL = URL(fileURLWithPath: "/app/Resources/data/characters_data.json")
         
         do {
             let animeData = try Data(contentsOf: animeFileURL)
