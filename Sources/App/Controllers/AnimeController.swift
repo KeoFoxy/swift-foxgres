@@ -37,10 +37,12 @@ struct AnimeController: RouteCollection {
     
     @Sendable
     func delete(req: Request) async throws -> HTTPStatus {
-        guard let anime = try await Anime.find(req.parameters.get("get"), on: req.db) else {
+        guard let animeID = req.parameters.get("id", as: UUID.self) else {
+            throw Abort(.badRequest)
+        }
+        guard let anime = try await Anime.find(animeID, on: req.db) else {
             throw Abort(.notFound)
         }
-        
         try await anime.delete(on: req.db)
         return .noContent
     }

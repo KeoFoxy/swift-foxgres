@@ -10,7 +10,6 @@ func routes(_ app: Application) throws {
         "Hello, world!"
     }
 
-    try app.register(collection: TodoController())
     try app.register(collection: CharacterController())
     try app.register(collection: AnimeController())
 }
